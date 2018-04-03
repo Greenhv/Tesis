@@ -1,0 +1,11 @@
+version: '2'
+services:
+  postgres:
+    container_name: tesis_db
+    image: postgres
+    environment:
+      POSTGRES_DB: educationalTexts
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD:
+    ports:
+      - "5432:5432"
