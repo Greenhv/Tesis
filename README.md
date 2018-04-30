@@ -4,6 +4,10 @@
 
 ### Este respositorio contiene los siguientes modulos:
 
+#### Dependencias
+* Standford Core NLP 2017
+
+#### Description
 * El notebook con la implementacion de una herramienta de limpieza automatica 
 de archivos pdf, adaptada especificamente para los archivos en la carpeta
 "files", que de uso libre y provistos por el MINEDU.
