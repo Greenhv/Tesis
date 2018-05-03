@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+stanford-corenlp-full-2017-06-09/
+stanford-corenlp-full-2018-02-27/
 
 # C extensions
 *.so
