@@ -11,6 +11,7 @@ class TextEasabilityMetrics:
     ''' This function will count the number of words before de main verb of the main clause '''
     numberOfWords = 0
     print(senteceParsed)
+    print(type(senteceParsed))
 
 
     return numberOfWords
@@ -22,6 +23,7 @@ class TextEasabilityMetrics:
   def syntaxisSimplicity(self, sentence):
     ''' This metric should use a Constituency Parser for Spanish provided by the Stanford library  '''
     senteceParsed = self.nlp.parse(sentence)
+
     # The sentence should be pre-procesing to extract its gramatical elements, but for the time we should use a noted corpus.
     numberOfWords = self.wordsBeforeMainVerb(senteceParsed)
     print("Syntactic Simplicity")
