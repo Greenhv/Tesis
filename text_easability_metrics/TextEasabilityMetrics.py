@@ -18,21 +18,26 @@ class TextEasabilityMetrics:
     wordsCountPP = wordsCount
 
     if(isinstance(treePP, Tree) and len(treePP) == 1) and treePP.height() == 2 and not isMainVerbFound:
-#         print(treePP)
-#         print(currentDeep)
+      # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
       verbFound = treePP.label().startswith("v")
       wordsCountPP = wordsCountPP + (1 if not verbFound else 0)
+      wordFound = treePP[0] if verbFound else ''
+      # print(treePP, currentDeep, verbFound, wordsCount)
 
-      return currentDeep, wordsCountPP, verbFound
+      return currentDeep, wordsCountPP, verbFound, wordFound
     else:
       partialDeep = 10000
+      currentWord = ''
       for index in range(len(treePP)):
         subTreeP = treePP[index]
-        deepPP, wordsCountPP, mainVerFound = self.getMainVerbRecursive(subTreeP, currentDeep + 1, wordsCountPP, isMainVerbFound);
-        if (mainVerFound and deepPP < partialDeep): partialDeep = deepPP
-      return partialDeep, wordsCountPP, mainVerFound
+        deepPP, wordsCountPP, mainVerFound, wordFound = self.getMainVerbRecursive(subTreeP, currentDeep + 1, wordsCountPP, isMainVerbFound);
 
-    return currentDeep, wordsCount, isMainVerbFound
+        if (mainVerFound and deepPP < partialDeep):
+          partialDeep = deepPP
+          currentWord = wordFound
+
+        # print(index, len(treePP), partialDeep, deepPP, wordsCount, mainVerFound, currentWord, wordFound)
+      return partialDeep, wordsCountPP, mainVerFound, currentWord 
 
   def wordsBeforeMainVerb(self, sentenceTree):
     ''' This function will count the number of words before de main verb of the main clause '''
@@ -40,29 +45,39 @@ class TextEasabilityMetrics:
     numOfWords = 0
     indexFound  = -1
     arrOfNumWords = list()
+    currentWord = ''
 
     for j in range(len(sentenceTree)):
-        print('-------------------------------------------------------------------------------------')
-        print(j)
-        print(sentenceTree[j])
+        # print('-------------------------------------------------------------------------------------')
+        # print(j)
+        # print(sentenceTree[j])
         # print('leaves', len(sentenceTree[j].leaves()))
         isFound = False
-        newDeep, numWordsBefore, isFound = self.getMainVerbRecursive(sentenceTree[j], 1, 0, isFound)
+        newWord = ''
+        newDeep, numWordsBefore, isFound, newWord = self.getMainVerbRecursive(sentenceTree[j], 1, 0, isFound)
 
         if (not isFound):
             numWordsBefore = len([leave for leave in sentenceTree[j].leaves() if not self.isSpecialChar(leave)])
 
         arrOfNumWords.append(numWordsBefore)
 
-        if (isFound and newDeep < currentDeep):
+        if (newWord != '' and newDeep < currentDeep):
             indexFound = j
             currentDeep = newDeep
+            currentWord = newWord
 
-        print(isFound, numWordsBefore, newDeep, currentDeep, indexFound)
-        print('====================================================================================')
+        # print('***************************************************************************')
+        # print(isFound, numWordsBefore, newDeep, currentDeep, indexFound, currentWord, newWord)
+        # print('====================================================================================')
 
-    print(arrOfNumWords, indexFound)
-    numOfWords =  sum(arrOfNumWords[:indexFound]) if indexFound >= 0 else sum(arrOfNumWords)
+    # print(arrOfNumWords, indexFound, currentWord)
+    # numOfWords = sum(arrOfNumWords[:indexFound]) if indexFound >= 0 else sum(arrOfNumWords)
+    treeLeaves = sentenceTree.leaves()
+    leafIndex = treeLeaves.index(currentWord) if currentWord != '' else 0
+    usefulLeaves = treeLeaves[:leafIndex]
+    numOfWords = len([leaf for leaf in usefulLeaves if not self.isSpecialChar(leaf)])
+    # print(usefulLeaves, len(usefulLeaves))
+
     return numOfWords
 
   def wordConcreteness(self, sentence):
