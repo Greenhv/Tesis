@@ -36,8 +36,9 @@ class TextEasabilityMetrics:
           partialDeep = deepPP
           currentWord = wordFound
 
-        # print(index, len(treePP), partialDeep, deepPP, wordsCount, mainVerFound, currentWord, wordFound)
-      return partialDeep, wordsCountPP, mainVerFound, currentWord 
+        # print('............................................................................................................')
+        # print('In recursive', f'tree: {subTreeP}', f'index {index}', f'len {len(treePP)}', f'deep: {partialDeep}', deepPP, wordsCount, mainVerFound, currentWord, wordFound)
+      return partialDeep, wordsCountPP, currentWord != '', currentWord 
 
   def wordsBeforeMainVerb(self, sentenceTree):
     ''' This function will count the number of words before de main verb of the main clause '''
@@ -67,7 +68,7 @@ class TextEasabilityMetrics:
             currentWord = newWord
 
         # print('***************************************************************************')
-        # print(isFound, numWordsBefore, newDeep, currentDeep, indexFound, currentWord, newWord)
+        # print('After Recursive: ', isFound, numWordsBefore, newDeep, currentDeep, indexFound, currentWord, newWord)
         # print('====================================================================================')
 
     # print(arrOfNumWords, indexFound, currentWord)
