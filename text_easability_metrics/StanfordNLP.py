@@ -5,7 +5,7 @@ import json
 class StanfordNLP:
     def __init__(self, host='http://localhost', port=9000, language='en'):
         self.nlp = StanfordCoreNLP(host, port=port,
-                                   timeout=30000, lang=language)  # , quiet=False, logging_level=logging.DEBUG)
+                                   timeout=500000, lang=language)  # , quiet=False, logging_level=logging.DEBUG)
         self.props = {
             'annotators': 'tokenize,ssplit,pos,lemma,ner,parse,depparse,dcoref,relation',
             'pipelineLanguage': language,

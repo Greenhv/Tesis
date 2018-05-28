@@ -3,12 +3,12 @@ from .StanfordNLP import StanfordCoreNLP, StanfordNLP
 from nltk.tree import Tree
 
 class TextEasabilityMetrics:
-  def __init__(self, path, port):
+  def __init__(self, host, port):
     '''
       All the methods in the class will work with only sentences. We think of this functions as granular
       functions which can be added to any procedure you want to build
     '''
-    self.nlp = StanfordNLP(language='es')
+    self.nlp = StanfordNLP(port=port, language='es')
     print('TextEasabilityMetrics')
 
   def isSpecialChar(self, leave):
@@ -90,13 +90,15 @@ class TextEasabilityMetrics:
       Also, this implementation is one of three metrics, the other two are are already implemented in
       the library Coh-Metrix-Esp (https://github.com/andreqi/coh-metrix-esp)
     '''
+    # print(sentence)
+    # print("========================================================")
     sentenceTreeStr = self.nlp.parse(sentence)
     sentenceTree = Tree.fromstring(sentenceTreeStr)
     sentenceTree = sentenceTree[0] # We remove the ROOT element as the Tree head
 
     # The sentence should be pre-procesing to extract its gramatical elements, but for the time we should use a noted corpus.
     numberOfWords = self.wordsBeforeMainVerb(sentenceTree)
-    print("Syntactic Simplicity")
+    # print("Syntactic Simplicity")
 
     return numberOfWords
 
