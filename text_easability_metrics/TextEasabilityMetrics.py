@@ -1,15 +1,18 @@
 from .LSA import LSA
+from .WordConcreteness import WordConcreteness
 from .StanfordNLP import StanfordCoreNLP, StanfordNLP
 from nltk.tree import Tree
 
 class TextEasabilityMetrics:
-  def __init__(self, host, port):
+  def __init__(self, host='http://localhost', port=9000, path='', timeout=150000):
     '''
       All the methods in the class will work with only sentences. We think of this functions as granular
       functions which can be added to any procedure you want to build
     '''
-    self.nlp = StanfordNLP(port=port, language='es')
-    print('TextEasabilityMetrics')
+    if (path != ''):
+      self.nlp = StanfordNLP(path=path, language='es', timeout=timeout)
+    else:
+      self.nlp = StanfordNLP(port=port, language='es', timeout=timeout)
 
   def isSpecialChar(self, leave):
     return not leave.isalnum()
@@ -18,11 +21,9 @@ class TextEasabilityMetrics:
     wordsCountPP = wordsCount
 
     if(isinstance(treePP, Tree) and len(treePP) == 1) and treePP.height() == 2 and not isMainVerbFound:
-      # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
       verbFound = treePP.label().startswith("v")
       wordsCountPP = wordsCountPP + (1 if not verbFound else 0)
       wordFound = treePP[0] if verbFound else ''
-      # print(treePP, currentDeep, verbFound, wordsCount)
 
       return currentDeep, wordsCountPP, verbFound, wordFound
     else:
@@ -36,8 +37,6 @@ class TextEasabilityMetrics:
           partialDeep = deepPP
           currentWord = wordFound
 
-        # print('............................................................................................................')
-        # print('In recursive', f'tree: {subTreeP}', f'index {index}', f'len {len(treePP)}', f'deep: {partialDeep}', deepPP, wordsCount, mainVerFound, currentWord, wordFound)
       return partialDeep, wordsCountPP, currentWord != '', currentWord 
 
   def wordsBeforeMainVerb(self, sentenceTree):
@@ -49,10 +48,6 @@ class TextEasabilityMetrics:
     currentWord = ''
 
     for j in range(len(sentenceTree)):
-        # print('-------------------------------------------------------------------------------------')
-        # print(j)
-        # print(sentenceTree[j])
-        # print('leaves', len(sentenceTree[j].leaves()))
         isFound = False
         newWord = ''
         newDeep, numWordsBefore, isFound, newWord = self.getMainVerbRecursive(sentenceTree[j], 1, 0, isFound)
@@ -67,31 +62,29 @@ class TextEasabilityMetrics:
             currentDeep = newDeep
             currentWord = newWord
 
-        # print('***************************************************************************')
-        # print('After Recursive: ', isFound, numWordsBefore, newDeep, currentDeep, indexFound, currentWord, newWord)
-        # print('====================================================================================')
-
-    # print(arrOfNumWords, indexFound, currentWord)
     # numOfWords = sum(arrOfNumWords[:indexFound]) if indexFound >= 0 else sum(arrOfNumWords)
     treeLeaves = sentenceTree.leaves()
     leafIndex = treeLeaves.index(currentWord) if currentWord != '' else 0
     usefulLeaves = treeLeaves[:leafIndex]
     numOfWords = len([leaf for leaf in usefulLeaves if not self.isSpecialChar(leaf)])
-    # print(usefulLeaves, len(usefulLeaves))
 
     return numOfWords
 
-  def wordConcreteness(self, sentence):
-    print("Word Concreteness")
-  
+  def wordConcreteness(self, sentence_or_text, isText=False):
+    wc = WordConcreteness()
+    if (isText):
+      result = wc.getWordConcretenessInText(sentence_or_text)
+    else:
+      result = wc.getWordConcretenessInSentece(sentence_or_text)
+
+    return result
+
   def syntaxisSimplicity(self, sentence):
     '''
       This metric uses the Constituency Parser for Spanish provided by the Stanford CoreNLP Library v3.8.1.
       Also, this implementation is one of three metrics, the other two are are already implemented in
       the library Coh-Metrix-Esp (https://github.com/andreqi/coh-metrix-esp)
     '''
-    # print(sentence)
-    # print("========================================================")
     sentenceTreeStr = self.nlp.parse(sentence)
     sentenceTree = Tree.fromstring(sentenceTreeStr)
     sentenceTree = sentenceTree[0] # We remove the ROOT element as the Tree head

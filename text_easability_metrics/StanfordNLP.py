@@ -3,9 +3,12 @@ import logging
 import json
 
 class StanfordNLP:
-    def __init__(self, host='http://localhost', port=9000, language='en'):
-        self.nlp = StanfordCoreNLP(host, port=port,
-                                   timeout=500000, lang=language)  # , quiet=False, logging_level=logging.DEBUG)
+    def __init__(self, path='', host='http://localhost', port=9000, language='en', timeout=150000):
+        if(path != ''):
+            self.nlp = StanfordCoreNLP(path, lang=language, timeout=timeout)
+        else:
+            self.nlp = StanfordCoreNLP(host, port=port,
+                                    timeout=timeout, lang=language)  # , quiet=False, logging_level=logging.DEBUG)
         self.props = {
             'annotators': 'tokenize,ssplit,pos,lemma,ner,parse,depparse,dcoref,relation',
             'pipelineLanguage': language,
